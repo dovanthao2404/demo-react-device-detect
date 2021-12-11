@@ -1,24 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import { isMobile } from "react-device-detect";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
+let router = null;
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    (async () => {
+      if (isMobile) {
+        router = await import("./Components/Mobile/routers/routes");
+
+        setIsLoading(false);
+      } else {
+        router = await import("./Components/Desktop/routers/routes");
+        setIsLoading(false);
+      }
+    })();
+  }, []);
+
+  return !isLoading ? (
+    <>
+      <Router>
+        {isMobile ? (
+          <div>
+            <Route path="/" component={router?.default} />
+          </div>
+        ) : (
+          <div>
+            <Route path="/" component={router?.default} />
+          </div>
+        )}
+      </Router>
+    </>
+  ) : (
+    <></>
   );
 }
 
